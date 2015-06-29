@@ -1,5 +1,7 @@
 #Chess960 row generator. This generates white, black is mirrored.
 #Rules: King between rooks, bishops on different colors.
+#Black: 0, 2, 4, 6
+#White: 1, 3, 5, 7
 
 import sys, random
 
@@ -24,6 +26,7 @@ class gen960(object):
 	#generate king between rooks
 	#generate rest
 	def generate(self):
+		self.__init__()
 		inRow = self.mainRow
 		
 		#white bishop, 8 open squares
@@ -65,16 +68,44 @@ class gen960(object):
 		inRow[tracker[1]] = "N"
 
 		self.mainRow = inRow
+
+	def rowID(self, row):
+		idDict = {}
+		fIN = open('c960id.txt', 'r')
+		f = fIN.readlines()
+		for x in f:
+			y = x.split(' ')
+			idDict[y[1].rstrip('\n')] = y[0]
+		fIN.close()
+		strRow = ''.join(row)
+
+		return(idDict[strRow])
 	
 
-	def printRow(self):
+	def printRow(self, spid):
 		row = self.mainRow
-		print("\n")
+		print("\nRow ID: ", spid)
 		for y in range(0, 8):
 			print(row[y], " ", end="")
 		print("\n")
 
+# row = gen960()
+# uniqueRow = []
+# wrongCount = 0
+# for x in range(100000):
+# 	row.generate()
+# 	if row.mainRow in uniqueRow:
+# 		wrongCount += 1
+# 	else:
+# 		uniqueRow.append(row.mainRow)
+# print("Number of unique rows generated: ", len(uniqueRow))
+# print("Number of duplicate rows generated: ", wrongCount)
 
 row = gen960()
-row.generate()
-row.printRow()
+while True:
+	row.generate()
+	spid = row.rowID(row.mainRow)
+	row.printRow(spid)
+	i = input("Press Enter to generate, q to quit: ")
+	if i == 'q':
+		break
